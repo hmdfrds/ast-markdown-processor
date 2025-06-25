@@ -1,4 +1,4 @@
-from nodes import DocumentNode, TextNode, HeadingNode
+from nodes import DocumentNode, TextNode, HeadingNode, ParagraphNode
 
 class Parser:
 
@@ -20,15 +20,27 @@ class Parser:
     def parse_heading(self):
         line = self.lines[self.current_line_number]
 
-        level = line.count('#')
-        text = line.strip('# ')
+        level = 0
+        while level < len(line) and line[level] == '#':
+            level+=1
+        
+        text = line[level:].lstrip()
 
-        text_node = TextNode(text)
         heading_node = HeadingNode(level)
-        heading_node.children.append(text_node)
+        text_node = TextNode(text)
+        heading_node.children.append(text)
 
-        self.document.children.append(heading_node)
+        self.document.children.append(text_node)
+
         self.current_line_number += 1
         
     def parse_paragraph(self):
-        pass
+        p_node = ParagraphNode()
+        
+        line = self.lines[self.current_line_number]
+        while self.current_line_number < len(self.lines) and line.strip() != '' and not line.startswith("#"):
+            text_node = TextNode(line)
+            p_node.children.append(text_node)
+            self.current_line_number += 1
+
+        self.document.children.append(p_node)
