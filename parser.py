@@ -35,12 +35,20 @@ class Parser:
         self.current_line_number += 1
         
     def parse_paragraph(self):
-        p_node = ParagraphNode()
+
+        paragraph_text = ''
         
-        line = self.lines[self.current_line_number]
-        while self.current_line_number < len(self.lines) and line.strip() != '' and not line.startswith("#"):
-            text_node = TextNode(line)
-            p_node.children.append(text_node)
+        while self.current_line_number < len(self.lines) and self.lines[self.current_line_number].strip() != '' and not self.lines[self.current_line_number].startswith("#"):
+
+            line = self.lines[self.current_line_number]
+
+            if paragraph_text:
+                paragraph_text += ' '
+            paragraph_text += line.strip()
+
             self.current_line_number += 1
 
-        self.document.children.append(p_node)
+        if paragraph_text:
+            p_node = ParagraphNode()
+            p_node.children.append(TextNode(paragraph_text))
+            self.document.children.append(p_node)
