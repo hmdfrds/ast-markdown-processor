@@ -30,14 +30,13 @@ class Parser:
 
         heading_node = HeadingNode(level)
         text_node = TextNode(text)
-        heading_node.children.append(text)
+        heading_node.children.append(text_node)
 
-        self.document.children.append(text_node)
+        self.document.children.append(heading_node)
 
         self.current_line_number += 1
 
     def parse_paragraph(self):
-
         paragraph_text = ""
 
         while (
