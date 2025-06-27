@@ -1,4 +1,6 @@
-from nodes import DocumentNode, HeadingNode, ParagraphNode, TextNode
+from typing import List
+
+from nodes import DocumentNode, HeadingNode, Node, ParagraphNode, StrongNode, TextNode
 
 
 class Parser:
@@ -29,8 +31,8 @@ class Parser:
         text = line[level:].lstrip()
 
         heading_node = HeadingNode(level)
-        text_node = TextNode(text)
-        heading_node.children.append(text_node)
+        inline_node = self.parse_inline(text)
+        heading_node.children.extend(inline_node)
 
         self.document.children.append(heading_node)
 
@@ -55,6 +57,22 @@ class Parser:
 
         if paragraph_text:
             p_node = ParagraphNode()
-            p_node.children.append(TextNode(paragraph_text))
+            inline_node = self.parse_inline(paragraph_text)
+            p_node.children.extend(inline_node)
             self.document.children.append(p_node)
 
+    def parse_inline(self, text: str) -> List[Node]:
+
+        parts = text.split("**")
+        inline_nodes = []
+
+        for i, part in enumerate(parts):
+            if part == "":
+                continue
+            if i % 2 == 0:
+                inline_nodes.append(TextNode(part))
+            else:
+                strong_node = StrongNode()
+                strong_node.children.append(TextNode(part))
+                inline_nodes.append(strong_node)
+        return inline_nodes

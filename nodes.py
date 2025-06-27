@@ -3,7 +3,7 @@ from typing import List
 
 class Node:
     def __init__(self):
-        self.children: List("Node") = []
+        self.children: List[Node] = []
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.children})"
@@ -41,4 +41,3 @@ class StrongNode(Node):
 
 class ItalicNode(Node):
     pass
-
