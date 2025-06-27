@@ -63,16 +63,36 @@ class Parser:
 
     def parse_inline(self, text: str) -> List[Node]:
 
-        parts = text.split("**")
-        inline_nodes = []
+        nodes = []
+        current_text = ""
+        i = 0
 
-        for i, part in enumerate(parts):
-            if part == "":
-                continue
-            if i % 2 == 0:
-                inline_nodes.append(TextNode(part))
+        while i < len(text):
+
+            if text[i : i + 2] == "**":
+
+                if current_text:
+                    nodes.append(TextNode(current_text))
+                    current_text = ""
+
+                found_index = text.find("**", i + 2)
+
+                if found_index != -1:
+                    text_node = TextNode(text[i + 2 : found_index])
+                    strong_node = StrongNode()
+                    strong_node.children.append(text_node)
+                    nodes.append(strong_node)
+                    i = found_index + 2
+
+                else:
+                    current_text += text[i : i + 2]
+                    i = i + 2
+
             else:
-                strong_node = StrongNode()
-                strong_node.children.append(TextNode(part))
-                inline_nodes.append(strong_node)
-        return inline_nodes
+                current_text += text[i]
+                i += 1
+
+        if current_text:
+            nodes.append(TextNode(current_text))
+
+        return nodes
