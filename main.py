@@ -1,5 +1,7 @@
 from parser import Parser
 
+from renderer import Renderer
+
 sample_markdown1 = """
 # This is a Main Heading
 
@@ -15,8 +17,31 @@ This is the final paragraph.
 
 sample_markdown2 = "This is a paragraph with **some bold text** in the middle."
 
-parser = Parser(sample_markdown2)
+sample_markdown3 = "This **is a *very* important** message."
 
-document_ast = parser.parse()
+sample_markdown4 = """
+# This is the Final Test!
 
+And it's a **good** one. Our parser should handle this paragraph,
+which includes *nested inline elements* like **bold *and* italic**.
+
+Pretty cool.
+"""
+
+print("\n--- Markdown ---")
+
+print(sample_markdown4)
+
+print("\n--- PARSING ---")
+my_parser = Parser(sample_markdown4)
+document_ast = my_parser.parse()
+print("AST Created Successfully!")
 print(document_ast)
+
+
+print("\n--- RENDERING ---")
+my_renderer = Renderer()
+html_output = my_renderer.render(document_ast)
+print("HTML Rendered Successfully!")
+print("\n--- FINAL HTML OUTPUT ---")
+print(html_output)

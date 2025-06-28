@@ -1,6 +1,14 @@
 from typing import List
 
-from nodes import DocumentNode, HeadingNode, Node, ParagraphNode, StrongNode, TextNode
+from nodes import (
+    DocumentNode,
+    HeadingNode,
+    ItalicNode,
+    Node,
+    ParagraphNode,
+    StrongNode,
+    TextNode,
+)
 
 
 class Parser:
@@ -78,15 +86,32 @@ class Parser:
                 found_index = text.find("**", i + 2)
 
                 if found_index != -1:
-                    text_node = TextNode(text[i + 2 : found_index])
+                    content = text[i + 2 : found_index]
                     strong_node = StrongNode()
-                    strong_node.children.append(text_node)
+                    strong_node.children.extend(self.parse_inline(content))
                     nodes.append(strong_node)
                     i = found_index + 2
 
                 else:
                     current_text += text[i : i + 2]
                     i = i + 2
+
+            elif text[i] == "*":
+
+                if current_text:
+                    nodes.append(TextNode(current_text))
+                    current_text = ""
+
+                found_index = text.find("*", i + 1)
+                if found_index != -1:
+                    content = text[i + 1 : found_index]
+                    italic_node = ItalicNode()
+                    italic_node.children.extend(self.parse_inline(content))
+                    nodes.append(italic_node)
+                    i = found_index + 1
+                else:
+                    current_text = text[i]
+                    i += 1
 
             else:
                 current_text += text[i]
